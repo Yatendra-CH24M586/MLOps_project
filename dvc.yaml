@@ -1,0 +1,38 @@
+stages:
+  preprocess:
+    cmd: python src/data_pipeline.py --params params.yaml
+    deps:
+      - src/data_pipeline.py
+      - params.yaml
+    outs:
+      - data/interim/preprocessed.paraquet   # <- changed
+
+  split:
+    cmd: python src/split.py --params params.yaml
+    deps:
+      - src/split.py
+      - params.yaml
+      - data/interim   # <- changed
+    outs:
+      - data/processed/train_train.parquet
+      - data/processed/train_val.parquet
+
+  train:
+    cmd: python src/train.py --train data/processed/train_train.parquet --val data/processed/train_val.parquet --params params.yaml
+    deps:
+      - src/train.py
+      - params.yaml
+      - data/processed/train_train.parquet
+      - data/processed/train_val.parquet
+    outs:
+      - models/model
+
+  evaluate:
+    cmd: python src/evaluate.py --val data/processed/train_val.parquet --model models/model --params params.yaml
+    deps:
+      - src/evaluate.py
+      - params.yaml
+      - models/model
+      - data/processed/train_val.parquet
+    metrics:
+      - metrics.json

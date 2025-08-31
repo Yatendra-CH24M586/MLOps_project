@@ -1,0 +1,38 @@
+dataset:
+  type: "titanic"   # options: titanic, mnist
+
+  titanic:
+    raw_path: "data/raw/train.csv"
+    processed_path: "data/processed/train.parquet"
+
+  mnist:
+    raw_images: "data/raw/train-images-idx3-ubyte"
+    raw_labels: "data/raw/train-labels-idx1-ubyte"
+    test_images: "data/raw/t10k-images-idx3-ubyte"
+    test_labels: "data/raw/t10k-labels-idx1-ubyte"
+    processed_train: "data/processed/mnist_train.parquet"
+    processed_test: "data/processed/mnist_test.parquet"
+
+features:
+  titanic:
+    categorical: ["Sex", "Embarked", "Title"]
+    numerical: ["Pclass", "Age", "SibSp", "Parch", "Fare", "FamilySize", "IsAlone"]
+    label: "Survived"
+
+  mnist:
+    label: "label"
+    image_col: "pixels"   # flat 784-length array
+
+model:
+  titanic:
+    type: "RandomForest"
+    numTrees: 100
+    maxDepth: 5
+
+  mnist:
+    type: "LogisticRegression"
+    maxIter: 100
+
+split:
+  train_size: 0.8
+  seed: 42

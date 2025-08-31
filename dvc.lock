@@ -1,0 +1,30 @@
+schema: '2.0'
+stages:
+  train:
+    cmd: python src/train.py --train data/processed/train_train.parquet --val 
+      data/processed/train_val.parquet --params params.yaml
+    deps:
+    - path: data/processed/train_train.parquet
+      hash: md5
+      md5: 19d0e656ae130542965993a4a530cf2f.dir
+      size: 33349
+      nfiles: 4
+    - path: data/processed/train_val.parquet
+      hash: md5
+      md5: d95ed655597f34aaf8048c9b2d3fb449.dir
+      size: 11029
+      nfiles: 4
+    - path: params.yaml
+      hash: md5
+      md5: 9a3d23fe7d8af61ce42f214d19addf00
+      size: 194
+    - path: src/train.py
+      hash: md5
+      md5: a25b84e798f07db655db6e52e27645f0
+      size: 2583
+    outs:
+    - path: mlruns/
+      hash: md5
+      md5: a122926414eb373e469b232581f656b8.dir
+      size: 78971
+      nfiles: 34
