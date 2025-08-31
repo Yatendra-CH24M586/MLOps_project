@@ -1,4 +1,6 @@
 [core]
-    remote = storage
+    remote = local_remote
 ['remote "storage"']
     url = C:/dvc_remote
+['remote "local_remote"']
+    url = /home/vboxuser/Desktop/AI Project/End Term/dvc_remote

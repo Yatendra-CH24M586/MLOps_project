@@ -6,25 +6,122 @@ stages:
     deps:
     - path: data/processed/train_train.parquet
       hash: md5
-      md5: 19d0e656ae130542965993a4a530cf2f.dir
+      md5: 606a72f7e6ce114e520e428a6a057b91.dir
       size: 33349
       nfiles: 4
     - path: data/processed/train_val.parquet
       hash: md5
-      md5: d95ed655597f34aaf8048c9b2d3fb449.dir
+      md5: 7d4ff9bbf0188a01d457a90ed8321c03.dir
       size: 11029
       nfiles: 4
     - path: params.yaml
       hash: md5
-      md5: 9a3d23fe7d8af61ce42f214d19addf00
-      size: 194
+      md5: 0c863387c889d8a7e115bedce023ee86
+      size: 800
     - path: src/train.py
       hash: md5
-      md5: a25b84e798f07db655db6e52e27645f0
-      size: 2583
+      md5: 940ddd000efccb827c17f897685ab6df
+      size: 3634
     outs:
-    - path: mlruns/
+    - path: models/titanic_model
       hash: md5
-      md5: a122926414eb373e469b232581f656b8.dir
-      size: 78971
-      nfiles: 34
+      md5: abbbd926e027e32c95156ca27b51d8b7.dir
+      size: 78018
+      nfiles: 44
+  preprocess:
+    cmd: python src/data_pipeline.py --params params.yaml
+    deps:
+    - path: data/raw/t10k-images.idx3-ubyte
+      hash: md5
+      md5: 2646ac647ad5339dbf082846283269ea
+      size: 7840016
+    - path: data/raw/t10k-labels.idx1-ubyte
+      hash: md5
+      md5: 27ae3e4e09519cfbb04c329615203637
+      size: 10008
+    - path: data/raw/test.csv
+      hash: md5
+      md5: 7533b82eae4b582610cbd68aa636b017
+      size: 28629
+    - path: data/raw/train-images.idx3-ubyte
+      hash: md5
+      md5: 6bbc9ace898e44ae57da46a324031adb
+      size: 47040016
+    - path: data/raw/train-labels.idx1-ubyte
+      hash: md5
+      md5: a25bea736e30d166cdddb491f175f624
+      size: 60008
+    - path: data/raw/train.csv
+      hash: md5
+      md5: 2309cc5f04782ed9bb6016d9f4e381cf
+      size: 61194
+    - path: params.yaml
+      hash: md5
+      md5: 0c863387c889d8a7e115bedce023ee86
+      size: 800
+    - path: src/data_pipeline.py
+      hash: md5
+      md5: c3dc65be96257a343ecb145690c1ea84
+      size: 8251
+    outs:
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 78f1709b9273eaa88540e31116cca7d1.dir
+      size: 38440
+      nfiles: 4
+  split:
+    cmd: python src/split.py data/processed/train.parquet 
+      data/processed/train_train.parquet data/processed/train_val.parquet 
+      --params params.yaml
+    deps:
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 78f1709b9273eaa88540e31116cca7d1.dir
+      size: 38440
+      nfiles: 4
+    - path: params.yaml
+      hash: md5
+      md5: 0c863387c889d8a7e115bedce023ee86
+      size: 800
+    - path: src/split.py
+      hash: md5
+      md5: 70c0e1a40d848183e4a18c840a5caaf1
+      size: 3492
+    outs:
+    - path: data/processed/train_train.parquet
+      hash: md5
+      md5: 606a72f7e6ce114e520e428a6a057b91.dir
+      size: 33349
+      nfiles: 4
+    - path: data/processed/train_val.parquet
+      hash: md5
+      md5: 7d4ff9bbf0188a01d457a90ed8321c03.dir
+      size: 11029
+      nfiles: 4
+  evaluate:
+    cmd: python src/evaluate.py --val data/processed/train_val.parquet --model 
+      models/titanic_model --params params.yaml
+    deps:
+    - path: data/processed/train_val.parquet
+      hash: md5
+      md5: 7d4ff9bbf0188a01d457a90ed8321c03.dir
+      size: 11029
+      nfiles: 4
+    - path: models/titanic_model
+      hash: md5
+      md5: abbbd926e027e32c95156ca27b51d8b7.dir
+      size: 78018
+      nfiles: 44
+    - path: params.yaml
+      hash: md5
+      md5: 0c863387c889d8a7e115bedce023ee86
+      size: 800
+    - path: src/evaluate.py
+      hash: md5
+      md5: b2150af75ebbaaa92e18b3103f61fdf5
+      size: 4330
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: b2c338df858fbd760c68826727e45bbc
+      size: 33

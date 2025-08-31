@@ -4,15 +4,23 @@ stages:
     deps:
       - src/data_pipeline.py
       - params.yaml
+      - data/raw/train.csv
+      - data/raw/test.csv
+      - data/raw/train-images.idx3-ubyte
+      - data/raw/train-labels.idx1-ubyte
+      - data/raw/t10k-images.idx3-ubyte
+      - data/raw/t10k-labels.idx1-ubyte
     outs:
-      - data/interim/preprocessed.paraquet   # <- changed
+      - data/processed/train.parquet        # Titanic processed
+      # - data/processed/mnist_train.parquet # MNIST processed train
+      # - data/processed/mnist_test.parquet  # MNIST processed test
 
   split:
-    cmd: python src/split.py --params params.yaml
+    cmd: python src/split.py data/processed/train.parquet data/processed/train_train.parquet data/processed/train_val.parquet --params params.yaml
     deps:
       - src/split.py
       - params.yaml
-      - data/interim   # <- changed
+      - data/processed/train.parquet
     outs:
       - data/processed/train_train.parquet
       - data/processed/train_val.parquet
@@ -24,15 +32,18 @@ stages:
       - params.yaml
       - data/processed/train_train.parquet
       - data/processed/train_val.parquet
+      # - data/processed/mnist_train.parquet
+      # - data/processed/mnist_test.parquet
     outs:
-      - models/model
+      - models/titanic_model
+      # - models/mnist_model
 
   evaluate:
-    cmd: python src/evaluate.py --val data/processed/train_val.parquet --model models/model --params params.yaml
+    cmd: python src/evaluate.py --val data/processed/train_val.parquet --model models/titanic_model --params params.yaml
     deps:
       - src/evaluate.py
       - params.yaml
-      - models/model
+      - models/titanic_model
       - data/processed/train_val.parquet
     metrics:
       - metrics.json
