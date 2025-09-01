@@ -1,37 +1,37 @@
-# api/app.py
-import mlflow.pyfunc
-from fastapi import FastAPI
-from pydantic import BaseModel
-import uvicorn
+import mlflow
+from mlflow.pyfunc import load_model
+from fastapi import FastAPI, HTTPException
 import pandas as pd
 
-app = FastAPI()
+# Ensure correct tracking server
+mlflow.set_tracking_uri("http://127.0.0.1:5000")
 
-# Load model from registry
-MODEL_NAME = "TitanicRF"
-STAGE = "Production"
-model = mlflow.pyfunc.load_model(model_uri=f"models:/{MODEL_NAME}/{STAGE}")
+client = mlflow.tracking.MlflowClient()
+model_name = "TitanicModel"  # must match UI exactly
 
+# Debug: list model
+print("Models visible in registry:", client.get_registered_model("TitanicModel"))
 
-class Passenger(BaseModel):
-    Pclass: int
-    Sex_idx: float
-    Age: float
-    SibSp: int
-    Parch: int
-    Fare: float
-    Embarked_idx: float
-    FamilySize: int
-    IsAlone: int
-    Title_idx: float
+# Get latest staged version
+versions = client.get_latest_versions(model_name, stages=["Staging"])
+if not versions:
+    raise RuntimeError(f"No model found in Staging for {model_name}")
+staging_version = versions[0].version
 
+model_uri = f"models:/{model_name}/{staging_version}"
+model = load_model(model_uri)
+
+app = FastAPI(title="Titanic Model API")
+
+@app.get("/")
+def root():
+    return {"message": "Titanic Model API is running!"}
 
 @app.post("/predict")
-def predict(passenger: Passenger):
-    data = pd.DataFrame([passenger.dict()])
-    prediction = model.predict(data)
-    return {"prediction": int(prediction[0])}
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+def predict(data: dict):
+    df = pd.DataFrame([data])
+    preds = model.predict(df)
+    return {
+        "prediction": preds,
+        "model_version": staging_version
+    }

@@ -20,13 +20,13 @@ stages:
       size: 800
     - path: src/train.py
       hash: md5
-      md5: 940ddd000efccb827c17f897685ab6df
-      size: 3634
+      md5: 938557f6f92e1c502f9ec70d7e6b9665
+      size: 6050
     outs:
     - path: models/titanic_model
       hash: md5
-      md5: abbbd926e027e32c95156ca27b51d8b7.dir
-      size: 78018
+      md5: ede1a8f108e7d63fd79e830de7fdf1f2.dir
+      size: 78363
       nfiles: 44
   preprocess:
     cmd: python src/data_pipeline.py --params params.yaml
@@ -109,8 +109,8 @@ stages:
       nfiles: 4
     - path: models/titanic_model
       hash: md5
-      md5: abbbd926e027e32c95156ca27b51d8b7.dir
-      size: 78018
+      md5: ede1a8f108e7d63fd79e830de7fdf1f2.dir
+      size: 78363
       nfiles: 44
     - path: params.yaml
       hash: md5
@@ -118,10 +118,10 @@ stages:
       size: 800
     - path: src/evaluate.py
       hash: md5
-      md5: b2150af75ebbaaa92e18b3103f61fdf5
-      size: 4330
+      md5: 477580341f74a432dd329227b5169525
+      size: 3936
     outs:
     - path: metrics.json
       hash: md5
-      md5: b2c338df858fbd760c68826727e45bbc
-      size: 33
+      md5: 894887e7e3bc4807f38b539aed0c9adf
+      size: 30
