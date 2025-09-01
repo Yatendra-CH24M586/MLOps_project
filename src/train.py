@@ -117,7 +117,7 @@ def train_titanic(spark, params, train_path, val_path):
     print(f"[TRAIN] Titanic val AUC: {val_auc:.4f} | train_time_s={train_time_s:.2f}")
     return val_auc
 
-# A comment to check data versioning
+
 def train_mnist(spark, params, train_path, val_path):
     # Placeholder for MNIST when you enable it later
     model_cfg = params["model"]["mnist"]
@@ -149,7 +149,7 @@ def train_mnist(spark, params, train_path, val_path):
     print(f"[TRAIN] MNIST val accuracy: {val_acc:.4f}")
     return val_acc
 
-
+# A comment to check retraining
 def main():
     args = parse_args()
     with open(args.params, "r") as f:
